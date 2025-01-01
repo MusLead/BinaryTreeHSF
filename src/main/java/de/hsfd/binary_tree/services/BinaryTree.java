@@ -29,7 +29,7 @@ public abstract class BinaryTree {
      * @param parentTarget     The parent node of the target node that needs to be deleted.
      * @param target           The node to be deleted from the binary tree.
      * @param positionOfTarget Specifies whether the target node is the left or right child of the parent node.
-     * @return
+     * @return a possible nullNode that will be deleted later if exist
      * @throws TreeException If a problem occurs during node deletion.
      */
     protected abstract Node deleteTarget(Node parentTarget, Node target, CHILD positionOfTarget) throws TreeException;

@@ -6,8 +6,6 @@ import de.hsfd.binary_tree.services.exceptions.TreeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 public class RBTreeTest {
 
     @Test
