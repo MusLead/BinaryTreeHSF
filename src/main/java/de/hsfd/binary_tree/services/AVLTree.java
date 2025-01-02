@@ -82,7 +82,7 @@ public class AVLTree extends BinaryTree {
                 }
                 if(parent.getParent() == null) this.root = parent;
 
-                if(getBalanceFactor(parent) > 1) // this node to the leaf should now be balanced
+                if (!(getBalanceFactor(parent) <= 1 && getBalanceFactor(parent) >= -1)) // this node to the leaf should now be balanced
                     throw new TreeException("Violates the AVL tree rule\nNode: " +
                             parent.getData() +"\nHeight: " + parent.getHeight() + "\nTree:\n"
                             + this.getTreePrinter().prettyPrint());
