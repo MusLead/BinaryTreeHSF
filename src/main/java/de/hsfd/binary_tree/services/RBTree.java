@@ -78,18 +78,19 @@ public class RBTree extends BinaryTree {
 
             Node uncleY = case1 == null ? new Node(null, BLACK) : case1;
             if(uncleY.getColor() == RED) {
+                // Case 1
                 parent.setColor(BLACK);
                 uncleY.setColor(BLACK);
                 grandParent.setColor(RED);
                 z = grandParent;
             } else {
                 if (z == case2) {
+                    // Case 2
                     z = parent;
                     if(isGrandparentLeftChild) leftRotate(z);
                     else rightRotate(z);
                 }
-                // case 3
-                // case 3 will always be executed after case 2
+                // Case 3
                 parent.setColor(BLACK);
                 grandParent.setColor(RED);
                 if(isGrandparentLeftChild) rightRotate(grandParent);

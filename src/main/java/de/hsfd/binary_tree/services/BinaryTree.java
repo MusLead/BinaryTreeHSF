@@ -72,7 +72,7 @@ public abstract class BinaryTree {
         if(root == null)
             root = newNode;
         else {
-            Node parent = getParent(newNode.getData());
+            Node parent = getParentOf(newNode.getData());
 
             if(newNode.getData().compareTo(parent.getData()) < 0) {
                 parent.setLeft(newNode);
@@ -91,7 +91,7 @@ public abstract class BinaryTree {
      * @param x The value that needs to be attached to the parent
      * @return the available parent
      */
-    protected Node getParent(Comparable x) {
+    protected Node getParentOf(Comparable x) {
         Node parent = null;
         Node n = root;
         while(n != null) {
@@ -242,7 +242,7 @@ public abstract class BinaryTree {
 
         queueNodes.add(root);
         while (!queueNodes.isEmpty()) {
-            Node current = queueNodes.remove(0);
+            Node current = queueNodes.removeFirst();
             if (current.getLeft() != null) {
                 int leftValue = (int) current.getLeft().getData();
                 iterNode.setLeft(new TreePrinter(leftValue, null, null));
@@ -255,7 +255,7 @@ public abstract class BinaryTree {
                 queueNode.add(iterNode.getRight());
                 queueNodes.add(current.getRight());
             }
-            if (!queueNode.isEmpty()) iterNode = queueNode.remove(0); // remove the first element, so that the next element is the next node
+            if (!queueNode.isEmpty()) iterNode = queueNode.removeFirst(); // remove the first element, so that the next element is the next node
         }
         return treePrinterRoot;
     }

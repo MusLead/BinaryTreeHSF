@@ -64,24 +64,25 @@ public class AVLTree extends BinaryTree {
     private void balanceTheTree(Node parent, Node newNode) throws TreeException {
         while(parent != null) {
             updateHeight(parent);
-            int balance = getBalance(parent);
+            int balance = getBalanceFactor(parent);
 
             if(balance > 1 || balance < -1) {
                 if (balance > 0) { //left heavy from the parent
-                    if(parent.equals(newNode) && getBalance(parent.getLeft()) < 0 // delete case
+                    if(parent.equals(newNode) && getBalanceFactor(parent.getLeft()) < 0 // delete case
                             || !parent.equals(newNode) &&  newNode.getData().compareTo(parent.getLeft().getData()) > 0) { //insert case
                         leftRotate(parent.getLeft());// Left Right Case
                     }
                     rightRotate(parent);
                 } else { // (balance < 0) right heavy from the parent
-                    if (parent.equals(newNode) && getBalance(parent.getRight()) > 0 // delete case
+                    if (parent.equals(newNode) && getBalanceFactor(parent.getRight()) > 0 // delete case
                             || !parent.equals(newNode) && newNode.getData().compareTo(parent.getRight().getData()) < 0){ //insert case
                         rightRotate(parent.getRight());// Right Left Case
                     }
                     leftRotate(parent);
                 }
                 if(parent.getParent() == null) this.root = parent;
-                if(getBalance(parent) > 1)
+
+                if(getBalanceFactor(parent) > 1) // this node to the leaf should now be balanced
                     throw new TreeException("Violates the AVL tree rule\nNode: " +
                             parent.getData() +"\nHeight: " + parent.getHeight() + "\nTree:\n"
                             + this.getTreePrinter().prettyPrint());
@@ -99,7 +100,7 @@ public class AVLTree extends BinaryTree {
      * @param n the root to be checked whether imbalance exists
      * @return the integer result of the balance factor
      */
-    static int getBalance(Node n) {
+    static int getBalanceFactor(Node n) {
         if (n == null) // it means the node has not been initialised
             return 0;
         return height(n.getLeft()) - height(n.getRight());
@@ -124,7 +125,7 @@ public class AVLTree extends BinaryTree {
 
             // this code can only be executed if initialised height for a node is 0!
             if(parent.getHeight() > 1) {
-                int balance = getBalance(parent);
+                int balance = getBalanceFactor(parent);
                 if (balance > 0) { //left heavy from the parent
                     if (newNode.getData().compareTo(parent.getLeft().getData()) > 0) {
                         leftRotate(parent.getLeft()); // Left Right Case
