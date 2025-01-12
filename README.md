@@ -30,7 +30,7 @@ project.
 
 Ensure you have the following installed on your system before running the project:
 
-- Java 17+
+- Java 21+
 - IntelliJ IDEA (Recommended for better execution)
 
 ### Literature Overview
