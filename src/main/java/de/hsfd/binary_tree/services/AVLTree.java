@@ -2,8 +2,12 @@ package de.hsfd.binary_tree.services;
 
 import de.hsfd.binary_tree.services.exceptions.TreeException;
 
+import static de.hsfd.binary_tree.services.AVLTree.OPERATION.DELETE;
+import static de.hsfd.binary_tree.services.AVLTree.OPERATION.INSERT;
+
 @SuppressWarnings({"rawtypes","unchecked"})
 public class AVLTree extends BinaryTree {
+    enum OPERATION {DELETE, INSERT}
 
     @Override
     protected Node deleteTarget(Node parentTarget, Node target, CHILD positionOfTarget) throws TreeException {
@@ -20,7 +24,7 @@ public class AVLTree extends BinaryTree {
                 possibleNullNode =  deleteTargetWithOneChildOrNone(parentTarget, target, positionOfTarget);
             }
             if(target.getParent() == null && target != root) target = parentTarget;
-            balanceTheTree(target,target);
+            balanceTheTree(target,target,DELETE);
             return possibleNullNode;
         }
         return null;
@@ -30,7 +34,7 @@ public class AVLTree extends BinaryTree {
     public void insert(Comparable x) throws TreeException {
         Node newNode = new Node(x);
         insertNode(newNode);
-        balanceTheTree(newNode.getParent(),newNode);
+        balanceTheTree(newNode.getParent(),newNode,INSERT);
     }
 
     /**
@@ -61,21 +65,21 @@ public class AVLTree extends BinaryTree {
      *                otherwise for delete should only be newNode == parent
      * @throws TreeException if a violation of AVL tree properties persists after balancing
      */
-    private void balanceTheTree(Node parent, Node newNode) throws TreeException {
+    private void balanceTheTree(Node parent, Node newNode, OPERATION operation) throws TreeException {
         while(parent != null) {
             updateHeight(parent);
             int balance = getBalanceFactor(parent);
 
             if(balance > 1 || balance < -1) {
                 if (balance > 0) { //left heavy from the parent
-                    if(parent.equals(newNode) && getBalanceFactor(parent.getLeft()) < 0 // delete case
-                            || !parent.equals(newNode) &&  newNode.getData().compareTo(parent.getLeft().getData()) > 0) { //insert case
+                    if(operation.equals(DELETE) && getBalanceFactor(parent.getLeft()) < 0 // delete case
+                            || operation.equals(INSERT) &&  newNode.getData().compareTo(parent.getLeft().getData()) > 0) { //insert case
                         leftRotate(parent.getLeft());// Left Right Case
                     }
                     rightRotate(parent);
                 } else { // (balance < 0) right heavy from the parent
-                    if (parent.equals(newNode) && getBalanceFactor(parent.getRight()) > 0 // delete case
-                            || !parent.equals(newNode) && newNode.getData().compareTo(parent.getRight().getData()) < 0){ //insert case
+                    if (operation.equals(DELETE) && getBalanceFactor(parent.getRight()) > 0 // delete case
+                            || operation.equals(INSERT) && newNode.getData().compareTo(parent.getRight().getData()) < 0){ //insert case
                         rightRotate(parent.getRight());// Right Left Case
                     }
                     leftRotate(parent);
@@ -192,7 +196,7 @@ public class AVLTree extends BinaryTree {
                     // we assume that there is just one element in the tree
                     node = parentTarget;
                 }
-                balanceTheTree(parentTarget,node);
+                balanceTheTree(parentTarget,node,DELETE);
                 parentTarget = parentTarget == null ? null : parentTarget.getParent();
             }
 
