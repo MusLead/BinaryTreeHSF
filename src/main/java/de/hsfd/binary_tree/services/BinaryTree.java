@@ -7,6 +7,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BinaryTree {
@@ -347,53 +350,98 @@ public abstract class BinaryTree {
         }
     }
 
-    public void printDOT(String filename) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            writer.write("digraph RBTree {\n");
-            writer.write("    node [shape=circle];\n");
-            if (root != null) {
-                generateDOT(root, writer);
-            }
-            writer.write("}\n");
-        } catch (IOException e) {
-            System.err.println("Fehler beim Schreiben der DOT-Datei: " + e.getMessage());
-        }
-    }
-
-    private void generateDOT(Node node, BufferedWriter writer) throws IOException {
+    /**
+     * Generates a base DOT representation of the binary tree starting from the
+     * given node.
+     * The DOT format is used for visualizing graphs. In this case for visualizing
+     * the binary tree.
+     * This method will be extended by {@link BinaryTree#exportDOT(String)} to
+     * generate a complete DOT representation.
+     *
+     * @param node     The current node in the binary tree.
+     * @param writer  The StringBuilder used to accumulate the DOT representation.
+     * @param depth    The current depth of the node in the tree.
+     * @param depthMap A map that groups nodes by their depth for rank=same grouping
+     *                 in DOT.
+     */
+    private void generateDOT(Node node, BufferedWriter writer, int depth, Map<Integer, List<String>> depthMap) throws IOException {
         if (node != null) {
-            // Knoten mit Farbe darstellen
+            // Node color logic
             String fillColor = node.getColor().equals(Node.COLOR.RED) ? "red" : "black";
             String fontColor = node.getColor().equals(Node.COLOR.RED) ? "black" : "white";
 
-            // Knoten mit Hintergrund- und Textfarbe darstellen
-            writer.write(String.format("    \"%d\" [style=filled, fillcolor=%s, fontcolor=%s];\n",
-                    node.getData(), fillColor, fontColor));
+            // Write the node representation
+            writer.write(String.format("    \"%s\" [style=filled, fillcolor=%s, fontcolor=%s];\n",
+                    node.getData().toString(), fillColor, fontColor));
 
+            // Add non-NIL node to depthMap for rank=same grouping
+            depthMap.computeIfAbsent(depth, k -> new ArrayList<>()).add(node.getData().toString());
 
-            // Linkes Kind
+            // Left child
             if (node.getLeft() != null) {
-                writer.write(String.format("    \"%d\" -> \"%d\";\n", node.getData(), node.getLeft().getData()));
-                generateDOT(node.getLeft(), writer);
-            } else {
-                // Platzhalter für NIL-Knoten
-                String nilId = "NIL_" + System.identityHashCode(node.getLeft());
-                writer.write(String.format("    \"%s\" [label=\"NIL\", shape=box, color=black];\n", nilId));
-                writer.write(String.format("    \"%d\" -> \"%s\";\n", node.getData(), nilId));
+                writer.write(String.format("    \"%s\" -> \"%s\";\n",
+                        node.getData().toString(), node.getLeft().getData().toString()));
+                generateDOT(node.getLeft(), writer, depth + 1, depthMap);
+            } else if (node.getRight() != null) {
+                // Invisible edge to represent missing left child
+                String nilId = "NIL_" + System.identityHashCode(node) + "_left";
+                writer.write(String.format("    \"%s\" [shape=circle, style=invis, fillcolor=black, width=0.1, height=0.1, label=\"\"];\n", nilId));
+                writer.write(String.format("    \"%s\" -> \"%s\" [style=invis];\n", node.getData().toString(), nilId));
             }
 
-            // Rechtes Kind
+            // Right child
             if (node.getRight() != null) {
-                writer.write(String.format("    \"%d\" -> \"%d\";\n", node.getData(), node.getRight().getData()));
-                generateDOT(node.getRight(), writer);
-            } else {
-                // Platzhalter für NIL-Knoten
-                String nilId = "NIL_" + System.identityHashCode(node.getRight());
-                writer.write(String.format("    \"%s\" [label=\"NIL\", shape=box, color=black];\n", nilId));
-                writer.write(String.format("    \"%d\" -> \"%s\";\n", node.getData(), nilId));
+                writer.write(String.format("    \"%s\" -> \"%s\";\n",
+                        node.getData().toString(), node.getRight().getData().toString()));
+                generateDOT(node.getRight(), writer, depth + 1, depthMap);
+            } else if (node.getLeft() != null) {
+                // Invisible edge to represent missing right child
+                String nilId = "NIL_" + System.identityHashCode(node) + "_right";
+                writer.write(String.format("    \"%s\" [shape=circle, style=invis, fillcolor=black, width=0.1, height=0.1, label=\"\"];\n", nilId));
+                writer.write(String.format("    \"%s\" -> \"%s\" [style=invis];\n", node.getData().toString(), nilId));
             }
         }
     }
+
+    /**
+     * <p>
+     * Exports the binary tree structure in DOT format as a file.
+     * The DOT format is used for representing graphs and can be visualized using
+     * tools like Graphviz.
+     * </p>
+     * The method generates DOT representation for the nodes and records their depth
+     * levels.
+     * It also ensures that nodes at the same depth level are ranked the same in the
+     * DOT output.
+     *
+     */
+    public void exportDOT(String filename) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            Map<Integer, List<String>> depthMap = new HashMap<>();
+            writer.write("digraph Tree {\n");
+            writer.write("    node [shape=circle];\n");
+
+            // Generate DOT for nodes and record depth levels
+            generateDOT(root, writer, 0, depthMap);
+
+            // Add rank=same for nodes at the same depth
+            for (Map.Entry<Integer, List<String>> entry : depthMap.entrySet()) {
+                writer.write("    { rank=same; ");
+                for (String nodeId : entry.getValue()) {
+                    writer.write(String.format("\"%s\" ", nodeId));
+                }
+                writer.write("}\n");
+            }
+
+            writer.write("}\n");
+            writer.flush();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+
+
 
 
 }

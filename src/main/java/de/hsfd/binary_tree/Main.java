@@ -2,6 +2,8 @@ package de.hsfd.binary_tree;
 
 import de.hsfd.binary_tree.services.RBTree;
 
+import java.util.Arrays;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
@@ -16,10 +18,16 @@ public class Main {
             System.out.println("Dummy iteration i = " + i);
         }
 
-        RBTree  tree = new RBTree();
-        tree.insert(10);
-        tree.insert(20);
-        tree.insert(30);
-        tree.printDOT("hello.dot");
+        try {
+            RBTree tree = new RBTree();
+            tree.insert('h');
+            tree.insert('a');
+            tree.insert('l');
+            tree.insert('o');
+            tree.exportDOT("halo.dot");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
     }
 }
