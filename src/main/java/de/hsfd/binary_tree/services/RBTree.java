@@ -89,6 +89,7 @@ public class RBTree extends BinaryTree {
                     z = parent;
                     if(isGrandparentLeftChild) leftRotate(z);
                     else rightRotate(z);
+                    parent = parent.getParent();
                 }
                 // Case 3
                 parent.setColor(BLACK);
