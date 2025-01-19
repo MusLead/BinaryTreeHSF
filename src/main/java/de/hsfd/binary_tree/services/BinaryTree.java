@@ -69,8 +69,11 @@ public abstract class BinaryTree {
     }
 
     /**
+     * <p>
      * Insert the node into the tree without any self-balancing methods.
-     * After the execution, the newNode will have a parent if root != null. <p>
+     * After the execution, the newNode will have a parent if root != null. </p>
+     * <p>With this implementation without the wrapper, it can compare the objects
+     * whether it is char or int</p>
      * inspired from: AlgoDS Lecture HS Fulda 24/25
      * @param newNode will be added to the tree
      */
