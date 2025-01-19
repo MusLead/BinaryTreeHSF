@@ -1,5 +1,7 @@
 package de.hsfd.binary_tree;
 
+import de.hsfd.binary_tree.services.RBTree;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
@@ -13,5 +15,11 @@ public class Main {
             // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
             System.out.println("Dummy iteration i = " + i);
         }
+
+        RBTree  tree = new RBTree();
+        tree.insert(10);
+        tree.insert(20);
+        tree.insert(30);
+        tree.printDOT("hello.dot");
     }
 }

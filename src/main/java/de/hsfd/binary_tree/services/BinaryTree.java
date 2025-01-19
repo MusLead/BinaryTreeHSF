@@ -3,6 +3,9 @@ package de.hsfd.binary_tree.services;
 import de.hsfd.binary_tree.TreePrinter;
 import de.hsfd.binary_tree.services.exceptions.TreeException;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -344,9 +347,53 @@ public abstract class BinaryTree {
         }
     }
 
+    public void printDOT(String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write("digraph RBTree {\n");
+            writer.write("    node [shape=circle];\n");
+            if (root != null) {
+                generateDOT(root, writer);
+            }
+            writer.write("}\n");
+        } catch (IOException e) {
+            System.err.println("Fehler beim Schreiben der DOT-Datei: " + e.getMessage());
+        }
+    }
+
+    private void generateDOT(Node node, BufferedWriter writer) throws IOException {
+        if (node != null) {
+            // Knoten mit Farbe darstellen
+            String fillColor = node.getColor().equals(Node.COLOR.RED) ? "red" : "black";
+            String fontColor = node.getColor().equals(Node.COLOR.RED) ? "black" : "white";
+
+            // Knoten mit Hintergrund- und Textfarbe darstellen
+            writer.write(String.format("    \"%d\" [style=filled, fillcolor=%s, fontcolor=%s];\n",
+                    node.getData(), fillColor, fontColor));
 
 
+            // Linkes Kind
+            if (node.getLeft() != null) {
+                writer.write(String.format("    \"%d\" -> \"%d\";\n", node.getData(), node.getLeft().getData()));
+                generateDOT(node.getLeft(), writer);
+            } else {
+                // Platzhalter für NIL-Knoten
+                String nilId = "NIL_" + System.identityHashCode(node.getLeft());
+                writer.write(String.format("    \"%s\" [label=\"NIL\", shape=box, color=black];\n", nilId));
+                writer.write(String.format("    \"%d\" -> \"%s\";\n", node.getData(), nilId));
+            }
 
+            // Rechtes Kind
+            if (node.getRight() != null) {
+                writer.write(String.format("    \"%d\" -> \"%d\";\n", node.getData(), node.getRight().getData()));
+                generateDOT(node.getRight(), writer);
+            } else {
+                // Platzhalter für NIL-Knoten
+                String nilId = "NIL_" + System.identityHashCode(node.getRight());
+                writer.write(String.format("    \"%s\" [label=\"NIL\", shape=box, color=black];\n", nilId));
+                writer.write(String.format("    \"%d\" -> \"%s\";\n", node.getData(), nilId));
+            }
+        }
+    }
 
 
 }
