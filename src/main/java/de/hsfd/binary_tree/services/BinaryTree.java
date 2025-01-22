@@ -251,7 +251,7 @@ public abstract class BinaryTree {
 
         queueNodes.add(root);
         while (!queueNodes.isEmpty()) {
-            Node current = queueNodes.removeFirst();
+            Node current = queueNodes.remove(0);
             if (current.getLeft() != null) {
                 int leftValue = (int) current.getLeft().getData();
                 iterNode.setLeft(new TreePrinter(leftValue, null, null));
@@ -264,7 +264,7 @@ public abstract class BinaryTree {
                 queueNode.add(iterNode.getRight());
                 queueNodes.add(current.getRight());
             }
-            if (!queueNode.isEmpty()) iterNode = queueNode.removeFirst(); // remove the first element, so that the next element is the next node
+            if (!queueNode.isEmpty()) iterNode = queueNode.remove(0); // remove the first element, so that the next element is the next node
         }
         return treePrinterRoot;
     }
