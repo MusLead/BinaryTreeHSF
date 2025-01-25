@@ -6,6 +6,9 @@ import de.hsfd.binary_tree.services.exceptions.TreeException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -419,25 +422,33 @@ public abstract class BinaryTree {
      *
      */
     public void exportDOT(String filename) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            Map<Integer, List<String>> depthMap = new HashMap<>();
-            writer.write("digraph Tree {\n");
-            writer.write("    node [shape=circle];\n");
+        Path filePath = Paths.get(filename);
+        try {
+            // Ensure parent directories exist
+            if(filePath.getParent() != null)
+                // only create directories if the path is within the String filename
+                Files.createDirectories(filePath.getParent());
 
-            // Generate DOT for nodes and record depth levels
-            generateDOT(root, writer, 0, depthMap);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+                Map<Integer, List<String>> depthMap = new HashMap<>();
+                writer.write("digraph Tree {\n");
+                writer.write("    node [shape=circle];\n");
 
-            // Add rank=same for nodes at the same depth
-            for (Map.Entry<Integer, List<String>> entry : depthMap.entrySet()) {
-                writer.write("    { rank=same; ");
-                for (String nodeId : entry.getValue()) {
-                    writer.write(String.format("\"%s\" ", nodeId));
+                // Generate DOT for nodes and record depth levels
+                generateDOT(root, writer, 0, depthMap);
+
+                // Add rank=same for nodes at the same depth
+                for (Map.Entry<Integer, List<String>> entry : depthMap.entrySet()) {
+                    writer.write("    { rank=same; ");
+                    for (String nodeId : entry.getValue()) {
+                        writer.write(String.format("\"%s\" ", nodeId));
+                    }
+                    writer.write("}\n");
                 }
-                writer.write("}\n");
-            }
 
-            writer.write("}\n");
-            writer.flush();
+                writer.write("}\n");
+                writer.flush();
+            }
         } catch (Exception e) {
             throw new IOException(e);
         }

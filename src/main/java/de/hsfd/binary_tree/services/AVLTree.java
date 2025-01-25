@@ -19,7 +19,6 @@ public class AVLTree extends BinaryTree {
             } else {
                 possibleNullNode =  deleteTargetWithOneChildOrNone(parentTarget, target, positionOfTarget);
             }
-            if(target.getParent() == null && target != root) target = parentTarget;
             balanceTheTree(target);
             return possibleNullNode;
         }
