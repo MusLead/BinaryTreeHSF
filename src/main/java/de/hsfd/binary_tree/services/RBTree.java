@@ -72,9 +72,9 @@ public class RBTree extends BinaryTree {
             Node parent = z.getParent();
             Node grandParent = parent.getParent();
 
-            boolean isGrandparentLeftChild = parent == grandParent.getLeft();
-            Node case1 = isGrandparentLeftChild ? grandParent.getRight() : grandParent.getLeft();
-            Node case2 = isGrandparentLeftChild ? parent.getRight() : parent.getLeft();
+            boolean isParentLeftChildOfGrandParent = parent == grandParent.getLeft();
+            Node case1 = isParentLeftChildOfGrandParent ? grandParent.getRight() : grandParent.getLeft();
+            Node case2 = isParentLeftChildOfGrandParent ? parent.getRight() : parent.getLeft();
 
             Node uncleY = case1 == null ? new Node(null, BLACK) : case1;
             if(uncleY.getColor() == RED) {
@@ -87,14 +87,14 @@ public class RBTree extends BinaryTree {
                 if (z == case2) {
                     // Case 2
                     z = parent;
-                    if(isGrandparentLeftChild) leftRotate(z);
+                    if(isParentLeftChildOfGrandParent) leftRotate(z);
                     else rightRotate(z);
                     parent = parent.getParent();
                 }
                 // Case 3
                 parent.setColor(BLACK);
                 grandParent.setColor(RED);
-                if(isGrandparentLeftChild) rightRotate(grandParent);
+                if(isParentLeftChildOfGrandParent) rightRotate(grandParent);
                 else leftRotate(grandParent);
             }
         }
@@ -142,8 +142,10 @@ public class RBTree extends BinaryTree {
                     // case 3
                     // the children of x in the if statement must not be null,
                     // otherwise something totally wrong!
-                    if(isLeftChildrenOfParent) w.getLeft().setColor(BLACK);
-                    else w.getRight().setColor(BLACK);
+                    if(w.getLeft() != null || w.getRight() != null) {
+                        if (isLeftChildrenOfParent) w.getLeft().setColor(BLACK);
+                        else w.getRight().setColor(BLACK);
+                    }
 
                     w.setColor(RED);
 
