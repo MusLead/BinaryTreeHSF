@@ -15,12 +15,11 @@ public class AVLTree extends BinaryTree {
             if(target.getRight() != null && target.getLeft() != null) {
                 // Case 2 if the target has two children. This case is from the Lecture AlgoDS 24/25 HS Fulda
                 // Then take the inorder approach to find the smallest children of the right target's children
-                replaceWithTheSmallestOfRightChildren(target);
+                parentTarget = replaceWithTheSmallestOfRightChildren(target);
             } else {
                 possibleNullNode =  deleteTargetWithOneChildOrNone(parentTarget, target, positionOfTarget);
-                target = parentTarget;
             }
-            balanceTheTree(target);
+            balanceTheTree(parentTarget);
             return possibleNullNode;
         }
         return null;
