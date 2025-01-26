@@ -373,8 +373,15 @@ public abstract class BinaryTree {
     private void generateDOT(Node node, BufferedWriter writer, int depth, Map<Integer, List<String>> depthMap) throws IOException {
         if (node != null) {
             // Node color logic
-            String fillColor = node.getColor().equals(Node.COLOR.RED) ? "red" : "black";
-            String fontColor = node.getColor().equals(Node.COLOR.RED) ? "black" : "white";
+            String fillColor;
+            String fontColor;
+            if(node.getColor() != null) {
+                fillColor = node.getColor().equals(Node.COLOR.RED) ? "red" : "black";
+                fontColor = node.getColor().equals(Node.COLOR.RED) ? "black" : "white";
+            } else {
+                fillColor = "green";
+                fontColor = "white";
+            }
 
             // Write the node representation
             writer.write(String.format("    \"%s\" [style=filled, fillcolor=%s, fontcolor=%s];\n",

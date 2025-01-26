@@ -4,6 +4,8 @@ import de.hsfd.binary_tree.services.exceptions.TreeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static de.hsfd.binary_tree.services.BSTreeTest.isBinarySearchTree;
 import static de.hsfd.binary_tree.services.Node.DEFAULT_HEIGHT;
 import static org.junit.jupiter.api.Assertions.*;
@@ -211,7 +213,7 @@ class AVLTreeTest {
     }
 
     @Test
-    void testDeleteOnly11() {
+    void testDeleteOnly11() throws IOException {
         avl.insert(25);
         avl.insert(15);
         avl.insert(55);
@@ -219,11 +221,13 @@ class AVLTreeTest {
         avl.insert(35);
         avl.insert(77);
         avl.insert(66);
+        avl.exportDOT("avlbfr_testDeleteOnly11.dot");
 
         avl.delete(11);
+        avl.exportDOT("avlaft_testDeleteOnly11.dot");
 
-        assertEquals(55, avl.getRoot().getData());
         assertTrue(isBalanced(avl.getRoot()));
+        assertEquals(55, avl.getRoot().getData());
     }
 
 

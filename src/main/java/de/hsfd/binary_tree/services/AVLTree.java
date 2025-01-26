@@ -18,6 +18,7 @@ public class AVLTree extends BinaryTree {
                 replaceWithTheSmallestOfRightChildren(target);
             } else {
                 possibleNullNode =  deleteTargetWithOneChildOrNone(parentTarget, target, positionOfTarget);
+                target = parentTarget;
             }
             balanceTheTree(target);
             return possibleNullNode;
