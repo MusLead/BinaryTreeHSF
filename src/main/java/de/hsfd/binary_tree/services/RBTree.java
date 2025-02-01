@@ -65,10 +65,12 @@ public class RBTree extends BinaryTree {
      * @param z the inserted node that has been connected to the tree
      */
     private void RBInsertFixup(Node z) {
+        // Loop only if the z is red, and the parent and grandparent is not null
         while(z.getParent() != null &&
                 z.getParent().getParent() != null &&
                 z.getParent().getColor() == RED) {
 
+            // Initialization
             Node parent = z.getParent();
             Node grandParent = parent.getParent();
 
@@ -77,27 +79,40 @@ public class RBTree extends BinaryTree {
             Node case2 = isParentLeftChildOfGrandParent ? parent.getRight() : parent.getLeft();
 
             Node uncleY = case1 == null ? new Node(null, BLACK) : case1;
+
+            // Reparation Logic
             if(uncleY.getColor() == RED) {
-                // Case 1
+                // Case 1 change the color of parent and uncle_y to black and grandparent to red
+                // z is now grandparent, for the next loop we will check if it violates exists
+                // Bottom up approach
                 parent.setColor(BLACK);
                 uncleY.setColor(BLACK);
                 grandParent.setColor(RED);
                 z = grandParent;
             } else {
+                // This Cases 2 and 3 below will be executed only if the parent is red and the Uncle is black (null)
                 if (z == case2) {
-                    // Case 2
+                    // Case 2 rotate the parent
+                    // This case will be executed if the z is the inner grandchild of grandparent
+                    // With this case executed, it will execute another rotation. Therefore, this case mostly called
+                    // Double Rotation Case (Case 2 and then Case 3)
                     z = parent;
                     if(isParentLeftChildOfGrandParent) leftRotate(z);
                     else rightRotate(z);
                     parent = parent.getParent();
                 }
-                // Case 3
+                // Case 3 rotate the grandparent
+                // if case 2 is not being executed,this case 3 is only single rotation,
+                // Otherwise Case 2 and then Case 3 combined will be Double Rotation
+                // The color will be changed, so that it maintains the RBTree Property.
                 parent.setColor(BLACK);
                 grandParent.setColor(RED);
                 if(isParentLeftChildOfGrandParent) rightRotate(grandParent);
                 else leftRotate(grandParent);
             }
         }
+
+        // Case 0: Always set root to black (in Lecture would be case 1 and 2)
         this.getRoot().setColor(BLACK);
     }
 
